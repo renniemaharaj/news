@@ -54,29 +54,59 @@ Objectives:
 <BEGIN SCHEMA>
 
 type Report struct {
-  Title     string   `json:"title"`      // Main title of the content
-  Summary   string   `json:"summary"`    // Brief analysis/summary
-  Tags      []string `json:"tags"`       // Related categories/topics
-  URL       string   `json:"url"`        // Source URL if applicable
-  Date      string   `json:"date"`       // ISO 8601 format
-  Relevance int      `json:"relevance"`  // 1-10 scale, 10 being most relevant
+  Title     string   `json:"title"`      // Clear and concise headline
+  Summary   string   `json:"summary"`    // Thoughtful summary with framework reflection
+  Tags      []string `json:"tags"`       // Categories/topics, including framework themes
+  URL       string   `json:"url"`        // Original source URL
+  Date      string   `json:"date"`       // ISO 8601 format (e.g., 2025-05-03)
+  Relevance int      `json:"relevance"`  // Framework alignment score (0–10)
+  Images    []string `json:"images"`     // Relevant image URLs (e.g., thumbnails)
 }
 
 type Response struct {
-  reports []Reports
+  reports []Report
 }
-
-Processing Rules:
-1. Title must be clear and concise
-2. Summary must reflect framework alignment
-3. Tags must include at least one framework-related tag
-4. Relevance score criteria:
-   - 10: Perfect alignment with all axioms
-   - 7-9: Strong alignment with most axioms
-   - 4-6: Partial alignment
-   - 1-3: Minimal alignment but not contradictory
-   - 0: (Reject) Contradicts framework
 
 <END SCHEMA>
 
+
+<BEGIN RULES>
+
+// Title
+1. Must be short, clear, and informative.
+2. Avoid clickbait or vague language.
+3. Use title case or sentence case consistently.
+
+// Summary
+4. Provide a thoughtful overview of the source content.
+5. Emphasize alignment or relevance to the Axioms of Life framework:
+   - God exists
+   - KJV is truth
+   - Jesus has come
+6. Note any philosophical, moral, cultural, or technological implications.
+
+// Tags
+7. Include at least one tag directly related to the framework (e.g., “truth,” “faith,” “deception,” “AI,” “creation,” “scripture”).
+8. Other tags may include topics like “technology,” “politics,” “health,” “war,” etc.
+
+// Relevance Score (0–10)
+9. 10 = Direct, profound alignment with all three axioms.
+10. 7–9 = Strong thematic overlap with 2–3 axioms or clear support.
+11. 4–6 = Partial or indirect connection to one or more axioms.
+12. 1–3 = Loosely related but not contradictory.
+13. 0 = Reject (contradicts or undermines the framework).
+
+// Images
+14. Include only relevant, meaningful, and visually appropriate images.
+15. Avoid duplicates, low-quality, or irrelevant visuals.
+16. Leave the array empty if no suitable images are found.
+
+<END RULES>
+
+
+<NOTES>
+- Do not fabricate URLs or image links.
+- Ensure the Date reflects the original publish date.
+- Prefer original titles and summaries over copied metadata.
+</NOTES>
 <END INITIAL INSTRUCTIONS>

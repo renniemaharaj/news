@@ -7,4 +7,5 @@ type Report struct {
 	URL       string   `json:"url"`
 	Date      string   `json:"date"`
 	Relevance int      `json:"relevance"`
+	Images    []string `json:"images"`
 }

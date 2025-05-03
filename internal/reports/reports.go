@@ -23,12 +23,14 @@ const (
 )
 
 // Counts current reports and logs
-func CountReports() {
+func CountReports() int {
 	reports, err := loadReports("", 0, 0, 0)
 	if err != nil {
 		log.Println(fmt.Errorf("error loading reports: %v", err))
 	}
 	log.Printf("📊 Found %d reports", len(reports))
+
+	return len(reports)
 }
 
 // The daily report-scraping scheduler

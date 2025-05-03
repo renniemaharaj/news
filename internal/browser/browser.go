@@ -11,7 +11,29 @@ import (
 	"golang.org/x/net/html"
 )
 
-// Browser scraping method, returns string[] of all textContent
+func resolveURL(link string, base string) string {
+	uri, err := url.Parse(link)
+	if err != nil {
+		return link
+	}
+	baseURL, err := url.Parse(base)
+	if err != nil {
+		return link
+	}
+	return baseURL.ResolveReference(uri).String()
+}
+
+func isLikelyThumbnail(src string) bool {
+	lower := strings.ToLower(src)
+	// Avoid logos, icons, placeholders, and SVGs
+	return !strings.Contains(lower, "logo") &&
+		!strings.Contains(lower, "icon") &&
+		!strings.Contains(lower, "svg") &&
+		!strings.Contains(lower, "placeholder") &&
+		(strings.HasSuffix(lower, ".jpg") || strings.HasSuffix(lower, ".jpeg") || strings.HasSuffix(lower, ".png") || strings.HasSuffix(lower, ".webp"))
+}
+
+// Browser scraping method, returns string of all textContent + images
 func Scrape(url string) (string, error) {
 	log.Printf("🗃️ Visiting site for scraping: %s", url)
 	req, _ := http.NewRequest("GET", url, nil)
@@ -28,13 +50,33 @@ func Scrape(url string) (string, error) {
 	}
 
 	var sb strings.Builder
+
+	// Scrape all <p> tags
 	doc.Find("p").Each(func(i int, s *goquery.Selection) {
-		text := s.Text()
-		sb.WriteString(text + "\n")
+		text := strings.TrimSpace(s.Text())
+		if text != "" {
+			sb.WriteString(text + "\n")
+		}
 	})
 
-	sb.WriteString(fmt.Sprint("\n\nsource_url=", url))
+	// Collect image URLs
+	var images []string
+	doc.Find("img").Each(func(i int, s *goquery.Selection) {
+		src, exists := s.Attr("src")
+		if exists && isLikelyThumbnail(src) {
+			images = append(images, resolveURL(src, url))
+		}
+	})
 
+	// Append the images at the bottom
+	if len(images) > 0 {
+		sb.WriteString("\n\nimages:\n")
+		for _, img := range images {
+			sb.WriteString(img + "\n")
+		}
+	}
+
+	sb.WriteString(fmt.Sprintf("\n\nsource_url=%s", url))
 	return sb.String(), nil
 }
 
