@@ -2,9 +2,18 @@ package reports
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 )
+
+// HealthHandler responds to healthcheck requests
+func HealthHandler(version string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/plain")
+		fmt.Fprintf(w, "OK %s", version)
+	}
+}
 
 // Request handler
 func HandleReportRequests(w http.ResponseWriter, r *http.Request) {
