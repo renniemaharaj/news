@@ -9,11 +9,10 @@ import (
 	"github.com/renniemaharaj/news/internal/types"
 )
 
-// Reports channel
-var Channel = make(chan types.Report, 100)
-
 // Coordinator runner
-func Run(cfg *config.Config) error {
+func Run(cfg *config.Config, output chan types.Report) error {
+	defer close(output) // Only coordinator closes it after sending
+
 	for _, keyword := range cfg.Keywords {
 		fmt.Println("🔍 Google searching: ", keyword)
 		urls, err := browser.Search(keyword, cfg.NumSitesPerQuery)
@@ -37,7 +36,7 @@ func Run(cfg *config.Config) error {
 		reports := reportWrapper.Reports
 
 		for _, r := range reports {
-			Channel <- r
+			output <- r
 			fmt.Printf("✔️ [%s] %s\n", r.Tags, r.Title)
 		}
 	}

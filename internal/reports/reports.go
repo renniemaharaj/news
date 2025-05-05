@@ -50,31 +50,31 @@ func DailyScheduler() {
 
 // Daily report-scraper scraper function
 func ScrapeReports() {
-	channel := coordinator.Channel
+	channel := make(chan types.Report)
 
 	cfg, err := config.Load("config.json")
 	if err != nil {
 		log.Printf("⚠️ Failed to load config: %s", err)
+		return
 	}
 
-	go func() {
-		if err := coordinator.Run(cfg); err != nil {
-			log.Printf("⚠️ Pipeline error:%s", err)
-		}
-		defer close(channel)
-	}()
-
-	if err := os.MkdirAll(reportsDir, os.ModePerm); err != nil {
-		log.Printf("⚠️ Failed to create reports directory:%s", err)
-	}
-
-	cleanExpiredReports()
-
+	// Save goroutine reads reports
 	go func() {
 		for report := range channel {
 			saveReport(report)
 		}
 	}()
+
+	if err := os.MkdirAll(reportsDir, os.ModePerm); err != nil {
+		log.Printf("⚠️ Failed to create reports directory: %s", err)
+	}
+
+	cleanExpiredReports()
+
+	// Run coordinator pipeline (it will close the channel when done)
+	if err := coordinator.Run(cfg, channel); err != nil {
+		log.Printf("⚠️ Pipeline error: %s", err)
+	}
 }
 
 // SaveReport function saves the report to reports directory
