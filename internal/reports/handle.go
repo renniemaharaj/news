@@ -24,7 +24,7 @@ func HandleReportRequests(w http.ResponseWriter, r *http.Request) {
 	desiredRelevance, _ := strconv.Atoi(relStr)
 
 	if max <= 0 {
-		max = 10
+		max = 30
 	}
 
 	reports, err := loadReports(query, index, max, desiredRelevance)
